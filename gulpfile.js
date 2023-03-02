@@ -6,6 +6,8 @@ const browserSync = require("browser-sync").create();
 const clean = require("gulp-clean");
 const concat = require("gulp-concat");
 const rename = require("gulp-rename");
+const plumber = require("gulp-plumber");
+const notify = require("gulp-notify");
 //html
 const htmlmin = require("gulp-htmlmin");
 const jade = require("gulp-jade");
@@ -22,6 +24,11 @@ const dist = "./dist";
 
 gulp.task("jade", async () => {
     gulp.src("./app/*.jade")
+        .pipe(
+            plumber({
+                errorHandler: notify.onError("Error: <%= error.message %>"),
+            })
+        )
         .pipe(jade({ pretty: true }))
         .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest("./dist"));
@@ -29,6 +36,11 @@ gulp.task("jade", async () => {
 
 gulp.task("css", async () => {
     gulp.src("./app/css/*.css")
+        .pipe(
+            plumber({
+                errorHandler: notify.onError("Error: <%= error.message %>"),
+            })
+        )
         .pipe(concat("main.mini.css"))
         .pipe(
             autoprefixer({
@@ -41,6 +53,11 @@ gulp.task("css", async () => {
 
 gulp.task("js", async () => {
     gulp.src("./app/js/**/*.js")
+        .pipe(
+            plumber({
+                errorHandler: notify.onError("Error: <%= error.message %>"),
+            })
+        )
         .pipe(browserify({ insertGlobals: true, debug: true }))
         //.pipe(uglify())
         .pipe(rename("main.mini.js"))
@@ -48,6 +65,11 @@ gulp.task("js", async () => {
 });
 gulp.task("images", async () => {
     gulp.src("./app/images/**/*")
+        .pipe(
+            plumber({
+                errorHandler: notify.onError("Error: <%= error.message %>"),
+            })
+        )
         .pipe(imagemin())
         .pipe(gulp.dest(dist + "/images"));
 });
